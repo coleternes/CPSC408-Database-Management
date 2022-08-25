@@ -1,0 +1,424 @@
+# LoadingScreen
+<LoadingScreen>:
+    name: "loading"
+
+    # Label for loading text
+    MDLabel:
+        text: "Loading data..."
+        halign: "center"
+        pos_hint: {"center_x": 0.5, "center_y": 0.2}
+        theme_text_color: "Custom"
+        font_style: "Button"
+
+# Login screen
+<LoginScreen>:
+    # Name used to traverse screens
+    name: "login"
+
+    # GUI IDs
+    username: username
+    password: password
+
+    # Label for app name
+    MDLabel:
+        text: "Inflation Tracker"
+        halign: "center"
+        pos_hint: {"center_x": 0.5, "center_y": 0.8}
+        theme_text_color: "Custom"
+        text_color: app.theme_cls.primary_color
+        font_style: "H3"
+
+    # Username text field
+    MDTextField:
+        id: username
+        hint_text: "Enter username:"
+        pos_hint: {"center_x": 0.5, "center_y": 0.6}
+        helper_text: "Do not leave blank"
+        helper_text_mode: "on_focus"
+        size_hint_x: None
+        width: 250
+        icon_right: "account-circle"
+        icon_right_color: app.theme_cls.primary_color
+
+    # Password text field
+    MDTextField:
+        id: password
+        hint_text: "Enter password:"
+        pos_hint: {"center_x": 0.5, "center_y": 0.5}
+        helper_text: "Do not leave blank"
+        helper_text_mode: "on_focus"
+        size_hint_x: None
+        width: 250
+        icon_right: "account-key"
+        icon_right_color: app.theme_cls.primary_color
+
+    # Create account button
+    MDFloatingActionButton:
+        icon: "account-plus"
+        pos_hint: {"x": 0.8,"y": 0.85}
+        on_release:
+            root.resetScreen()
+            root.manager.transition.direction = "right"
+            root.manager.current = "create"
+
+    # Login button
+    MDRectangleFlatButton:
+        text: "Login"
+        pos_hint: {"center_x": 0.5,"center_y": 0.2}
+        size_hint: (0.4, 0.15)
+        on_release:
+            root.login()
+            if root.access_granted: \
+            root.manager.transition.direction = "up"; \
+            root.manager.current = "menu"
+
+# Create account screen
+<CreateAccountScreen>:
+    # Name used to traverse screens
+    name: "create"
+
+    # GUI IDs
+    username: username
+    password: password
+
+    # Label that shows to create an account
+    MDLabel:
+        text: "Create an Account"
+        halign: "center"
+        pos_hint: {"center_x": 0.5, "center_y": 0.8}
+        theme_text_color: "Custom"
+        text_color: app.theme_cls.primary_color
+        font_style: "H3"
+
+    # Username text field
+    MDTextField:
+        id: username
+        hint_text: "Enter username:"
+        pos_hint: {"center_x": 0.5, "center_y": 0.6}
+        helper_text: "Do not leave blank"
+        helper_text_mode: "on_focus"
+        size_hint_x: None
+        width: 250
+        icon_right: "account-circle"
+        icon_right_color: app.theme_cls.primary_color
+
+    # Password text field
+    MDTextField:
+        id: password
+        hint_text: "Enter password:"
+        pos_hint: {"center_x": 0.5, "center_y": 0.5}
+        helper_text: "Do not leave blank"
+        helper_text_mode: "on_focus"
+        size_hint_x: None
+        width: 250
+        icon_right: "account-key"
+        icon_right_color: app.theme_cls.primary_color
+
+    # Return to login screen button
+    MDFloatingActionButton:
+        icon: "account-arrow-right"
+        pos_hint: {"x": 0.8,"y": 0.85}
+        on_release:
+            root.resetScreen()
+            root.manager.transition.direction = "left"
+            root.manager.current = "login"
+
+    # Submit button
+    MDRectangleFlatButton:
+        text: "Submit"
+        pos_hint: {"center_x": 0.5,"center_y": 0.2}
+        size_hint: 0.4, 0.15
+        on_release:
+            root.createAccount()
+            if root.access_granted: \
+            root.manager.transition.direction = "up"; \
+            root.manager.current = "menu"
+
+# Main menu screen
+<MenuScreen>:
+    # Name used to traverse screens
+    name: "menu"
+
+    # Box layout to divy up menu widgets
+    MDBoxLayout:
+        orientation: "vertical"
+
+        # Toolbar at top of screen
+        MDToolbar:
+            title: "Inflation Tracker"
+            right_action_items:[["menu", lambda x: root.settings()]]
+
+        # Box layout for toggle buttons
+        MDBoxLayout:
+            orientation: "horizontal"
+            size_hint_y: 0.075
+
+            # PCE Label
+            MDFlatButton:
+                text: "PCE"
+                on_release:
+                    root.pcePopup()
+
+            # PCE switch
+            MDSwitch:
+                active: True
+                on_release:
+                    root.togglePCE(self.active)
+
+            # Empty widget for spacing
+            Widget:
+                size_hint_x: None
+                width: dp(50)
+
+            # CPI Label
+            MDFlatButton:
+                text: "CPI"
+                on_release:
+                    root.cpiPopup()
+
+            # CPI switch
+            MDSwitch:
+                active: True
+                on_release:
+                    root.toggleCPI(self.active)
+
+            # Empty widget for spacing
+            Widget:
+                size_hint_x: None
+                width: dp(50)
+
+            # PPI Label
+            MDFlatButton:
+                text: "PPI"
+                on_release:
+                    root.ppiPopup()
+
+            # PPI switch
+            MDSwitch:
+                active: True
+                on_release:
+                    root.togglePPI(self.active)
+
+            # Empty widget for spacing
+            Widget:
+                size_hint_x: None
+                width: dp(50)
+
+            # FED Label
+            MDFlatButton:
+                text: "FED"
+                on_release:
+                    root.fedPopup()
+
+            # FED switch
+            MDSwitch:
+                active: True
+                on_release:
+                    root.toggleFED(self.active)
+
+        # Box layout for graph
+        MDBoxLayout:
+            id: graph_location
+
+        # Box layout for slider to adjust x values (time) shown in plot
+        MDBoxLayout:
+            size_hint_y: 0.1
+            padding: [0, 0, dp(5), dp(5)]
+
+            # Label for zoom
+            MDLabel:
+                text: "Zoom"
+                halign: "right"
+                theme_text_color: "Custom"
+                text_color: app.theme_cls.primary_color
+                font_style: "Button"
+                size_hint_x: 0.2
+
+            # Zoom slider
+            MDSlider:
+                min: 1.0
+                max: 10.0
+                value: 1.0
+                hint: False
+                color: app.theme_cls.primary_color
+                on_value: root.updateZoom(self.value)
+
+            # Label for zoom
+            MDLabel:
+                text: "Range"
+                halign: "right"
+                theme_text_color: "Custom"
+                text_color: app.theme_cls.primary_color
+                font_style: "Button"
+                size_hint_x: 0.2
+
+            # Range of values slider
+            MDSlider:
+                min: 0.0
+                max: 1.0
+                value: 0.0
+                hint: False
+                color: app.theme_cls.primary_color
+                on_value: root.updateRange(self.value)
+
+            # Export button
+            MDRectangleFlatButton:
+                text: "Export Data"
+                on_release:
+                    root.exportData()
+
+# Settings screen
+<SettingsScreen>:
+    name: "settings"
+
+    # Box layout to divy up settings widgets
+    MDBoxLayout:
+        orientation: "vertical"
+
+        # Toolbar at top of screen
+        MDToolbar:
+            title: "Settings"
+            right_action_items:[["keyboard-backspace", lambda x: root.menu()]]
+
+        # Allows the user to scroll through the list
+        ScrollView:
+
+            # List of settings
+            MDList:
+
+                # Change username
+                OneLineIconListItem:
+                    on_release:
+                        root.manager.transition.direction = "left"
+                        root.manager.current = "username"
+
+                    text: "Change Username"
+
+                    IconLeftWidget:
+                        icon: "face-profile"
+
+                # Change password
+                OneLineIconListItem:
+                    on_release:
+                        root.manager.transition.direction = "left"
+                        root.manager.current = "password"
+
+                    text: "Change Password"
+
+                    IconLeftWidget:
+                        icon: "asterisk"
+
+                # Delete account
+                OneLineIconListItem:
+                    on_release:
+                        root.verifyPopup()
+
+                    text: "Delete Account"
+
+                    IconLeftWidget:
+                        icon: "delete"
+
+                # Logout
+                OneLineIconListItem:
+                    on_release:
+                        root.manager.transition.direction = "down"
+                        root.manager.current = "login"
+
+                    text: "Logout"
+
+                    IconLeftWidget:
+                        icon: "logout"
+
+# Change username screen
+<UsernameScreen>:
+    # Name used to traverse screens
+    name: "username"
+
+    # GUI IDs
+    old_username: old_username
+    new_username: new_username
+
+    # Toolbar at top of screen
+    MDToolbar:
+        title: "Change Username"
+        pos_hint: {'top':1.0}
+        right_action_items:[["keyboard-backspace", lambda x: root.settings()]]
+
+    # Old username text field
+    MDTextField:
+        id: old_username
+        hint_text: "Enter old username:"
+        pos_hint: {"center_x": 0.5, "center_y": 0.6}
+        helper_text: "Do not leave blank"
+        helper_text_mode: "on_focus"
+        size_hint_x: None
+        width: 250
+        icon_right: "account-remove"
+        icon_right_color: app.theme_cls.primary_color
+
+    # New username text field
+    MDTextField:
+        id: new_username
+        hint_text: "Enter new username:"
+        pos_hint: {"center_x": 0.5, "center_y": 0.5}
+        helper_text: "Do not leave blank"
+        helper_text_mode: "on_focus"
+        size_hint_x: None
+        width: 250
+        icon_right: "account-plus"
+        icon_right_color: app.theme_cls.primary_color
+
+    # Submit button
+    MDRectangleFlatButton:
+        text: "Submit"
+        pos_hint: {"center_x": 0.5,"center_y": 0.2}
+        size_hint: (0.4, 0.15)
+        on_release:
+            root.changeUsername()
+
+# Change password screen
+<PasswordScreen>:
+    # Name used to traverse screens
+    name: "password"
+
+    # GUI IDs
+    old_password: old_password
+    new_password: new_password
+
+    # Toolbar at top of screen
+    MDToolbar:
+        title: "Change Password"
+        pos_hint: {'top':1.0}
+        right_action_items:[["keyboard-backspace", lambda x: root.settings()]]
+
+    # Old password text field
+    MDTextField:
+        id: old_password
+        hint_text: "Enter old password:"
+        pos_hint: {"center_x": 0.5, "center_y": 0.6}
+        helper_text: "Do not leave blank"
+        helper_text_mode: "on_focus"
+        size_hint_x: None
+        width: 250
+        icon_right: "account-remove"
+        icon_right_color: app.theme_cls.primary_color
+
+    # New password text field
+    MDTextField:
+        id: new_password
+        hint_text: "Enter new password:"
+        pos_hint: {"center_x": 0.5, "center_y": 0.5}
+        helper_text: "Do not leave blank"
+        helper_text_mode: "on_focus"
+        size_hint_x: None
+        width: 250
+        icon_right: "account-plus"
+        icon_right_color: app.theme_cls.primary_color
+
+    # Submit button
+    MDRectangleFlatButton:
+        text: "Submit"
+        pos_hint: {"center_x": 0.5,"center_y": 0.2}
+        size_hint: (0.4, 0.15)
+        on_release:
+            root.changePassword()
